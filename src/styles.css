@@ -1,0 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1d2128;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+hr {
+    background-color: rgba(229, 229, 229, 0.2);
+    border: 1px solid rgba(229, 229, 229, 0.2);
+    max-width: 620px;
+}
