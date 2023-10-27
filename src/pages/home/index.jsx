@@ -2,19 +2,26 @@ import { AnimatePresence, motion } from 'framer-motion';
 import background from '../../assets/background.png';
 import Header from '../../components/Header';
 import ItemList from '../../components/ItemList';
+import { fadeIn } from '../../variants';
 import './styles.css';
 
 // eslint-disable-next-line react/prop-types
 function App() {
   return (
     <AnimatePresence>
-      <div>
+      <motion.div
+        variants={fadeIn('down', 0.2)}
+        initial="hidden"
+        animate="show"
+        exit="hidden"
+      >
         <Header />
         <div className="content">
           <motion.img
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            variants={fadeIn('right', 0.6)}
+            initial="hidden"
+            animate="show"
+            exit="hidden"
             className="bg-img"
             src={background}
             alt="github logo"
@@ -42,7 +49,7 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </AnimatePresence>
   );
 }
