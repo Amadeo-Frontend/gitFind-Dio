@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import background from '../../assets/background.png';
 import Header from '../../components/Header';
 import ItemList from '../../components/ItemList';
@@ -7,6 +8,27 @@ import './styles.css';
 
 // eslint-disable-next-line react/prop-types
 function App() {
+  const [user, setUser] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [repos, setRepos] = useState(null);
+  const handleGetData = async () => {
+    const userData = await fetch(`https://api.github.com/users/${user}`);
+    const newUser = await userData.json();
+
+    if (newUser.name) {
+      const { avatar_url, name, bio, login } = newUser;
+      setCurrentUser({ avatar_url, name, bio, login }); // Adicione 'login' aqui
+
+      const reposData = await fetch(
+        `https://api.github.com/users/${user}/repos`,
+      );
+      const newRepos = await reposData.json(); // Corrija para 'reposData' aqui
+
+      if (newRepos.length) {
+        setRepos(newRepos);
+      }
+    }
+  };
   return (
     <AnimatePresence>
       <motion.div
@@ -28,25 +50,44 @@ function App() {
           />
           <div className="info">
             <div>
-              <input type="text" name="user" placeholder="@username" />
-              <button type="submit">Buscar</button>
+              <input
+                name="user"
+                value={user}
+                onChange={(event) => setUser(event.target.value)}
+                placeholder="@username"
+                required
+              />
+              <button onClick={handleGetData}>Buscar</button>
             </div>
-            <div className="profile-container">
-              <img src="" className="profile-img" alt="profile photo" />
-              <div className="profile">
-                <h3>Nome</h3>
-                <span>perfil</span>
-                <p>descrição</p>
+            {currentUser?.name ? (
+              <>
+                <div className="profile-container">
+                  <img
+                    src={currentUser.avatar_url}
+                    className="profile-img"
+                    alt="profile photo"
+                  />
+                  <div className="profile">
+                    <h3>{currentUser.name}</h3>
+                    <span>@{currentUser.login}</span>
+                    <p>{currentUser.bio}</p>
+                  </div>
+                </div>
+                <hr />
+              </>
+            ) : null}
+            {repos?.length ? (
+              <div>
+                <h4 className="repo">Repositórios</h4>
+                {repos.map((repo, index) => (
+                  <ItemList
+                    key={index}
+                    title={repo.name}
+                    description={repo.description}
+                  />
+                ))}
               </div>
-            </div>
-            <hr />
-            <div>
-              <h4 className="repo">Repositórios</h4>
-              <ItemList title="teste" description="descrição" />
-              <ItemList title="teste" description="descrição" />
-              <ItemList title="teste" description="descrição" />
-              <ItemList title="teste" description="descrição" />
-            </div>
+            ) : null}
           </div>
         </div>
       </motion.div>
